@@ -1,2 +1,8 @@
 server:
   port: 9898
+
+spring:
+  security:
+    user:
+      name: user
+      password: 123456
