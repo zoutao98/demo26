@@ -4,19 +4,32 @@ import java.io.PrintWriter;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tes.demo26.services.UserServices;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final SecurityAuthenticationEntryPoint securityAuthenticationEntryPoint;
 
-    public SecurityConfig(final SecurityAuthenticationEntryPoint securityAuthenticationEntryPoint) {
+    private final UserServices userServices;
+
+    public SecurityConfig(final SecurityAuthenticationEntryPoint securityAuthenticationEntryPoint, final UserServices userServices) {
         this.securityAuthenticationEntryPoint = securityAuthenticationEntryPoint;
+        this.userServices = userServices;
+    }
+
+    // @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -59,18 +72,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.exceptionHandling().authenticationEntryPoint(securityAuthenticationEntryPoint);
     }
 
-    // @Override
-    // protected void configure(HttpSecurity http) throws Exception {
-    // http.cors().and().csrf().disable();
-
-    // http.authorizeRequests()
-    // .antMatchers("/login").hasRole("USER")
-    // .anyRequest().authenticated();
-
-    // // http.formLogin().disable();
-    // http.exceptionHandling()
-    // //.accessDeniedHandler(accessDeny) // 权限不足的时候的逻辑处理
-    // .authenticationEntryPoint(securityAuthenticationEntryPoint); // 未登录是的逻辑处理
-    // }
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        // TODO Auto-generated method stub
+        // super.configure(auth);
+        auth.userDetailsService(userServices).passwordEncoder(NoOpPasswordEncoder.getInstance());
+    }
 
 }

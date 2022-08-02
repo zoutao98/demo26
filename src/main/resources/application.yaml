@@ -5,6 +5,24 @@ logging:
   level:
     root: INFO
 
+spring:
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:file:./h2db
+    username: sa
+    password: 123456
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
+  jpa:
+    database: H2
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
 # spring:
 #   security:
 #     user:
