@@ -56,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             out.close();
         });
         tLoginFilter.setAuthenticationManager(authenticationManagerBean());
-        tLoginFilter.setFilterProcessesUrl("/login");
+        // tLoginFilter.setFilterProcessesUrl("/doLogin");
         return tLoginFilter;
     }
 
@@ -66,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // http.authorizeRequests().antMatchers("/login").permitAll().anyRequest().authenticated();
         http.authorizeRequests().anyRequest().authenticated();
 
-        http.formLogin().loginProcessingUrl("/login").permitAll();
+        // http.formLogin().loginProcessingUrl("/doLogin").permitAll();
         http.addFilterAt(loginFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http.exceptionHandling().authenticationEntryPoint(securityAuthenticationEntryPoint);
