@@ -21,7 +21,7 @@ public class SecurityAuthenticationEntryPoint implements AuthenticationEntryPoin
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException authException) throws IOException, ServletException {
-        log.info("judeg. {}", request.getRequestURI());
+        log.info("Judge. {}", request.getRequestURI());
 
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().write(ResponseEntity.badRequest().body("需要登陆").getBody());
