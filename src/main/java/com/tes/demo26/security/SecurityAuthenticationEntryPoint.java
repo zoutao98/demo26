@@ -24,7 +24,7 @@ public class SecurityAuthenticationEntryPoint implements AuthenticationEntryPoin
         log.info("Judge. {}", request.getRequestURI());
 
         response.setContentType("application/json;charset=utf-8");
-        response.getWriter().write(ResponseEntity.badRequest().body("需要登陆").getBody());
+        response.getWriter().write("{\"message\":\"需要登录\"}");
     }
 
 }
