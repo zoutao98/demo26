@@ -1,6 +1,5 @@
 package com.tes.demo26.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -8,8 +7,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private SecurityAuthenticationEntryPoint securityAuthenticationEntryPoint;
+    private final SecurityAuthenticationEntryPoint securityAuthenticationEntryPoint;
+
+    public SecurityConfig(final SecurityAuthenticationEntryPoint securityAuthenticationEntryPoint){
+        this.securityAuthenticationEntryPoint = securityAuthenticationEntryPoint;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
