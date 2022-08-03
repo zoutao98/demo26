@@ -32,7 +32,6 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // TODO Auto-generated method stub
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         for (Role role : getRoles()) {
             authorities.add(new SimpleGrantedAuthority(role.getName()));
@@ -42,37 +41,31 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
-        // TODO Auto-generated method stub
         return this.password;
     }
 
     @Override
     public String getUsername() {
-        // TODO Auto-generated method stub
         return username;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        // TODO Auto-generated method stub
         return accountNonExpired;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        // TODO Auto-generated method stub
         return accountNonLocked;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        // TODO Auto-generated method stub
         return credentialsNonExpired;
     }
 
     @Override
     public boolean isEnabled() {
-        // TODO Auto-generated method stub
         return enabled;
     }
 

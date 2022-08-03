@@ -6,7 +6,10 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.tes.demo26.dao.UserDao;
 import com.tes.demo26.entity.Role;
@@ -15,6 +18,8 @@ import com.tes.demo26.entity.User;
 @SpringBootTest
 class Demo26ApplicationTests {
 
+	private final Logger log = LoggerFactory.getLogger(Demo26ApplicationTests.class);
+
 	@Resource
 	UserDao userDao;
 
@@ -22,7 +27,7 @@ class Demo26ApplicationTests {
 	void contextLoads() {
 		User u1 = new User();
 		u1.setUsername("zoutao");
-		u1.setPassword("123123");
+		u1.setPassword("$2a$10$dn7JhlvNmUc./aqgHJ/KzuqatucliauOiCSw4jTaxnLl47ErhH0pS");
 		u1.setAccountNonExpired(true);
 		u1.setAccountNonLocked(true);
 		u1.setCredentialsNonExpired(true);
@@ -33,6 +38,27 @@ class Demo26ApplicationTests {
 		rs1.add(r1);
 		u1.setRoles(rs1);
 		userDao.save(u1);
+
+		// User u1 = new User();
+		// u1.setUsername("zoutao");
+		// u1.setPassword("123123");
+		// u1.setAccountNonExpired(true);
+		// u1.setAccountNonLocked(true);
+		// u1.setCredentialsNonExpired(true);
+		// u1.setEnabled(true);
+		// List<Role> rs1 = new ArrayList<>();
+		// Role r1 = new Role();
+		// r1.setName("ROLE_admin");
+		// rs1.add(r1);
+		// u1.setRoles(rs1);
+		// userDao.delete(u1);
+	}
+
+	@Test
+	void password(){
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String encodePasswod = encoder.encode("123123");
+        log.info("{}", encodePasswod);
 	}
 
 }

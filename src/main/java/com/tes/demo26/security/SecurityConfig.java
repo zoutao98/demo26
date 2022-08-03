@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -56,7 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             out.close();
         });
         tLoginFilter.setAuthenticationManager(authenticationManagerBean());
-        // tLoginFilter.setFilterProcessesUrl("/doLogin");
+        tLoginFilter.setFilterProcessesUrl("/login");
         return tLoginFilter;
     }
 
@@ -64,19 +63,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable();
         // http.authorizeRequests().antMatchers("/login").permitAll().anyRequest().authenticated();
+        // 拦截所有请求
         http.authorizeRequests().anyRequest().authenticated();
 
-        // http.formLogin().loginProcessingUrl("/doLogin").permitAll();
+        http.formLogin().loginProcessingUrl("/login").permitAll();
         http.addFilterAt(loginFilter(), UsernamePasswordAuthenticationFilter.class);
 
+        // 未认证请求
         http.exceptionHandling().authenticationEntryPoint(securityAuthenticationEntryPoint);
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        // TODO Auto-generated method stub
         // super.configure(auth);
-        auth.userDetailsService(userServices).passwordEncoder(NoOpPasswordEncoder.getInstance());
+        auth.userDetailsService(userServices).passwordEncoder(passwordEncoder());
     }
 
 }
