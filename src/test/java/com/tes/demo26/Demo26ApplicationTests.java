@@ -1,7 +1,9 @@
 package com.tes.demo26;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -10,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.tes.demo26.dao.UserDao;
 import com.tes.demo26.entity.Role;
@@ -55,10 +59,20 @@ class Demo26ApplicationTests {
 	}
 
 	@Test
-	void password(){
+	void password() {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String encodePasswod = encoder.encode("123123");
-        log.info("{}", encodePasswod);
+		String encodePasswod = encoder.encode("123123");
+		log.info("{}", encodePasswod);
+	}
+
+	@Test
+	void password2() {
+		String idForEncode = "bcrypt";
+		Map<String, PasswordEncoder> encoders = new HashMap<>();
+		encoders.put(idForEncode, new BCryptPasswordEncoder());
+		DelegatingPasswordEncoder encoder = new DelegatingPasswordEncoder(idForEncode, encoders);
+		String encodePasswod = encoder.encode("123123");
+		log.info("{}", encodePasswod);
 	}
 
 }

@@ -1,6 +1,8 @@
 package com.tes.demo26.security;
 
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,6 +10,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -28,7 +31,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     // @Bean
     public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+        // return new BCryptPasswordEncoder();
+        String idForEncode = "bcrypt";
+		Map<String, PasswordEncoder> encoders = new HashMap<>();
+		encoders.put(idForEncode, new BCryptPasswordEncoder());
+        encoders.put(null, new BCryptPasswordEncoder());
+		return new DelegatingPasswordEncoder(idForEncode, encoders);
     }
 
     @Bean
