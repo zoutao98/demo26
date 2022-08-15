@@ -7,8 +7,10 @@ import java.util.Map;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tes.demo26.services.UserServices;
 
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final SecurityAuthenticationEntryPoint securityAuthenticationEntryPoint;
@@ -49,6 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             
             // String s = "{\"message\":\"登录成功\"}";
             String s = new ObjectMapper().writeValueAsString(authentication.getPrincipal());
+            // String s = authentication.getPrincipal().toString();
             out.write(s);
             out.flush();
             out.close();
@@ -71,8 +75,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable();
         // http.authorizeRequests().antMatchers("/login").permitAll().anyRequest().authenticated();
-        // 拦截所有请求
-        http.authorizeRequests().anyRequest().authenticated();
+        // 拦截所有请求 .antMatchers("/hello").hasAuthority("api:hello")
+        http.authorizeRequests()
+        .anyRequest().authenticated();
+        //
+        // http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        
 
         http.formLogin().loginProcessingUrl("/login").permitAll();
         http.addFilterAt(loginFilter(), UsernamePasswordAuthenticationFilter.class);

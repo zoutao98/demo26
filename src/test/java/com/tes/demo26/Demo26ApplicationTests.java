@@ -1,8 +1,6 @@
 package com.tes.demo26;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -16,7 +14,6 @@ import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.tes.demo26.dao.UserDao;
-import com.tes.demo26.entity.Role;
 import com.tes.demo26.entity.User;
 
 @SpringBootTest
@@ -31,16 +28,11 @@ class Demo26ApplicationTests {
 	void contextLoads() {
 		User u1 = new User();
 		u1.setUsername("zoutao");
-		u1.setPassword("$2a$10$dn7JhlvNmUc./aqgHJ/KzuqatucliauOiCSw4jTaxnLl47ErhH0pS");
+		u1.setPassword("{bcrypt}$2a$10$pDcQHZtu0/Y.2VLbI4Y31O9MlXmvl5sQ8nB20t58rl6glkrAPRjzu");
 		u1.setAccountNonExpired(true);
 		u1.setAccountNonLocked(true);
 		u1.setCredentialsNonExpired(true);
 		u1.setEnabled(true);
-		List<Role> rs1 = new ArrayList<>();
-		Role r1 = new Role();
-		r1.setName("ROLE_admin");
-		rs1.add(r1);
-		u1.setRoles(rs1);
 		userDao.save(u1);
 
 		// User u1 = new User();
