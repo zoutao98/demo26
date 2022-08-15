@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tes.demo26.jwt.JwtAuthenticationFilter;
 import com.tes.demo26.services.UserServices;
 
 @Configuration
@@ -71,6 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return tLoginFilter;
     }
 
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable();
@@ -80,10 +82,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .anyRequest().authenticated();
         //
         // http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        
 
-        http.formLogin().loginProcessingUrl("/login").permitAll();
-        http.addFilterAt(loginFilter(), UsernamePasswordAuthenticationFilter.class);
+        // http.formLogin().loginProcessingUrl("/login").permitAll();
+        http.authorizeHttpRequests().antMatchers("/authentication/login").permitAll();
+        // http.addFilterAt(loginFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAt(new JwtAuthenticationFilter(authenticationManagerBean()), UsernamePasswordAuthenticationFilter.class);
 
         // 未认证请求
         http.exceptionHandling().authenticationEntryPoint(securityAuthenticationEntryPoint);

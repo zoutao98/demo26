@@ -1,6 +1,9 @@
 package com.tes.demo26.jwt;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -8,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,7 +23,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    public JwtAuthenticationFilter() {
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
+        setAuthenticationManager(authenticationManager);
         setFilterProcessesUrl("/authentication/login");
     }
 
@@ -51,10 +56,18 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
             Authentication authResult) throws IOException, ServletException {
-        // TODO Auto-generated method stub
-        super.successfulAuthentication(request, response, chain, authResult);
-    }
+        // 登录成功時，返回json格式进行提示
 
-    
+        response.setContentType("application/json;charset=utf-8");
+        response.setStatus(HttpServletResponse.SC_OK);
+        PrintWriter out = response.getWriter();
+        Map<String, Object> map = new HashMap<>();
+        map.put("code", HttpServletResponse.SC_OK);
+        map.put("message", "登陆成功！");
+        map.put("token", JwtUtils.createJwtToken(new ObjectMapper().writeValueAsString(authResult.getPrincipal())));
+        out.write(new ObjectMapper().writeValueAsString(map));
+        out.flush();
+        out.close();
+    }
 
 }

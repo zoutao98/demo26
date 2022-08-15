@@ -7,15 +7,14 @@ import java.util.UUID;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 
 public class JwtUtils {
-    private static final long EXPIRE_TIME = 15 * 60 * 1000;//默认15分钟
-    //私钥
-    private static final String TOKEN_SECRET = "cofoePrivateKey";
-    
-    
+    private static final long EXPIRE_TIME = 15 * 60 * 1000;// 默认15分钟
+    // 私钥
+    private static final String TOKEN_SECRET = "zoutaoPrivateKey";
 
-    public static String createJwtToken(String claimInfo){
+    public static String createJwtToken(String claimInfo) {
         try {
             // 设置过期时间
             long now = System.currentTimeMillis();
@@ -29,10 +28,21 @@ public class JwtUtils {
                     .withHeader(header)
                     .withClaim("user", claimInfo)
                     .withJWTId(UUID.randomUUID().toString())
-                    .withExpiresAt(new Date(now +  + EXPIRE_TIME))
+                    .withExpiresAt(new Date(now + +EXPIRE_TIME))
                     .sign(algorithm);
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String parseJwtToken(String token) {
+        try {
+            return null;
+        } catch (JWTVerificationException e) {
+            // 无效的签名/声明
+            e.printStackTrace();
+
             return null;
         }
     }
