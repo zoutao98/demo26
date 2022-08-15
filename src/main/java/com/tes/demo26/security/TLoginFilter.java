@@ -1,43 +1,41 @@
 package com.tes.demo26.security;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tes.demo26.jwt.UserRequestDto;
 
 public class TLoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
-        if (!"POST".equals(request.getMethod())){
+        if (!"POST".equals(request.getMethod())) {
             throw new AuthenticationServiceException(
                     "Authentication method not supported: " + request.getMethod());
         }
-
         if (MediaType.APPLICATION_JSON_VALUE.equals(request.getContentType())) {
-            Map<String, String> loginInfo = new HashMap<>();
+            UserRequestDto loginInfo = null;
             try {
-                loginInfo = new ObjectMapper().readValue(request.getInputStream(), Map.class);
+                ObjectMapper objectMapper = new ObjectMapper();
+                loginInfo = objectMapper.readValue(request.getInputStream(), UserRequestDto.class);
             } catch (IOException e) {
-
+                e.printStackTrace();
+                throw new BadCredentialsException("json格式错误，没有找到用户名或密码");
             }
-            // 此处就不判空了
-            String username = loginInfo.get("username");
-            String password = loginInfo.get("password");
             UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(
-                    username.trim(), password.trim());
+                    loginInfo.getUsername().trim(), loginInfo.getPassword().trim());
             setDetails(request, authRequest);
             return this.getAuthenticationManager().authenticate(authRequest);
         } else {
