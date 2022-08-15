@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.tes.demo26.dao.UserDao;
 import com.tes.demo26.entity.User;
+import com.tes.demo26.jwt.JwtUtils;
 
 @SpringBootTest
 class Demo26ApplicationTests {
@@ -65,6 +66,11 @@ class Demo26ApplicationTests {
 		DelegatingPasswordEncoder encoder = new DelegatingPasswordEncoder(idForEncode, encoders);
 		String encodePasswod = encoder.encode("123123");
 		log.info("{}", encodePasswod);
+	}
+
+	@Test
+	void jwtToken(){
+		log.info("token:{}", JwtUtils.createJwtToken("zoutao"));
 	}
 
 }
