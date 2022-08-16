@@ -38,7 +38,7 @@ public class JwtUtils {
 
     public static String parseJwtToken(String token) {
         try {
-            return null;
+            return JWT.decode(token).getClaim("user").asString();
         } catch (JWTVerificationException e) {
             // 无效的签名/声明
             e.printStackTrace();
