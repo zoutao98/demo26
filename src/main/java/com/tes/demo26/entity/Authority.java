@@ -6,7 +6,6 @@ import javax.persistence.Id;
 
 import org.springframework.security.core.GrantedAuthority;
 
-
 @Entity(name = "t_authority")
 public class Authority implements GrantedAuthority {
 
@@ -14,10 +13,43 @@ public class Authority implements GrantedAuthority {
     @GeneratedValue
     private Integer id;
 
+    private Integer parentId;
+
+    private String description;
+
+    private String authority;
+
     @Override
     public String getAuthority() {
-        // TODO Auto-generated method stub
-        return null;
+        return authority;
     }
-    
+
+    public void setAuthority(String authority) {
+        this.authority = authority;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
 }

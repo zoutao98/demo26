@@ -10,6 +10,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -22,6 +24,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+
+    private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
         setAuthenticationManager(authenticationManager);
@@ -64,7 +68,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         Map<String, Object> map = new HashMap<>();
         map.put("code", HttpServletResponse.SC_OK);
         map.put("message", "登陆成功！");
-        map.put("token", JwtUtils.createJwtToken(new ObjectMapper().writeValueAsString(authResult.getPrincipal())));
+        String token = JwtUtils.createJwtToken(new ObjectMapper().writeValueAsString(authResult.getPrincipal()));
+        map.put("token", token);
+        log.info("{}",new ObjectMapper().writeValueAsString(authResult.getPrincipal()));
         out.write(new ObjectMapper().writeValueAsString(map));
         out.flush();
         out.close();

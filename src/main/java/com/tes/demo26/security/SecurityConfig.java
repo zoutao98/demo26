@@ -77,15 +77,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable();
+        http.headers().frameOptions().sameOrigin();
         // http.authorizeRequests().antMatchers("/login").permitAll().anyRequest().authenticated();
         // 拦截所有请求 .antMatchers("/hello").hasAuthority("api:hello")
-        http.authorizeRequests()
-                .anyRequest().authenticated();
-        //
+        http.authorizeRequests().antMatchers("/authentication/login", "/h2-console/**").permitAll();
+        http.authorizeRequests().anyRequest().authenticated();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         // http.formLogin().loginProcessingUrl("/login").permitAll();
-        http.authorizeHttpRequests().antMatchers("/authentication/login", "/error").permitAll();
+        
         // http.addFilterAt(loginFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilterAt(new JwtAuthenticationFilter(authenticationManagerBean()),
                 UsernamePasswordAuthenticationFilter.class)
