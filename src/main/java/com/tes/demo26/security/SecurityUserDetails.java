@@ -1,49 +1,35 @@
-package com.tes.demo26.entity;
+package com.tes.demo26.security;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-@Entity(name = "t_user")
-public class User implements UserDetails {
+import com.tes.demo26.entity.AuthorityEntity;
 
-    @Id
-    @GeneratedValue
-    private Integer id;
-    @Column(unique = true, nullable = false, length = 20)
+public class SecurityUserDetails implements UserDetails {
+
     private String username;
     private String password;
     private boolean accountNonExpired;
     private boolean accountNonLocked;
     private boolean credentialsNonExpired;
     private boolean enabled;
-    // @ManyToMany(targetEntity = Role.class)
-    // @JoinTable(name = "t_user_role_relation",joinColumns = {@JoinColumn(name = "userId")}, inverseJoinColumns = {@JoinColumn(name = "roleId")})
-    // private List<Role> roles;
+    List<AuthorityEntity> authorities;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("api:llo"));
         return authorities;
     }
     
-    
+    public void setAuthorities(List<AuthorityEntity> authorities) {
+        this.authorities = authorities;
+    }
+
     @Override
     public String getPassword() {
-        return this.password;
+        return password;
     }
 
     @Override
@@ -71,14 +57,6 @@ public class User implements UserDetails {
         return enabled;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public void setUsername(String username) {
         this.username = username;
     }
@@ -102,13 +80,5 @@ public class User implements UserDetails {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-
-    // public List<Role> getRoles() {
-    //     return roles;
-    // }
-
-    // public void setRoles(List<Role> roles) {
-    //     this.roles = roles;
-    // }
-
+    
 }

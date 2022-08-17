@@ -1,9 +1,9 @@
 package com.tes.demo26.security.jwt;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -11,27 +11,34 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.SpringApplication;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tes.demo26.dao.SpringUtil;
+import com.tes.demo26.dao.UserMapper;
+import com.tes.demo26.entity.AuthorityEntity;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-    private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(JwtAuthorizationFilter.class);
 
     private static final String HEADE_STRING = "Authorization";
 
     private static final String PREFIX_STRING = "Bearer";
 
+    private UserMapper userMapper;
+
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
+        userMapper = SpringUtil.getBean(UserMapper.class);
     }
 
     @Override
@@ -52,13 +59,15 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         if (StringUtils.hasText(token)) {
 
             token = token.replaceFirst(PREFIX_STRING, "").trim();
-            log.info(token);
+            if(!StringUtils.hasText(token)){
+                return null;
+            }
+
             String objectString = JwtUtils.parseJwtToken(token);
             ObjectMapper objectMapper = new ObjectMapper();
             try {
                 JsonNode jsonNode = objectMapper.readTree(objectString);
-                List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                authorities.add(new SimpleGrantedAuthority("api:llo"));
+                List<AuthorityEntity> authorities = userMapper.findAuthorityByUserName(jsonNode.get("username").asText());
                 return new UsernamePasswordAuthenticationToken(
                         jsonNode.get("username").asText(), null, authorities);
             } catch (JsonProcessingException e) {

@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import org.springframework.security.core.GrantedAuthority;
 
 @Entity(name = "t_authority")
-public class Authority implements GrantedAuthority {
+public class AuthorityEntity implements GrantedAuthority {
 
     @Id
     @GeneratedValue
@@ -18,6 +18,17 @@ public class Authority implements GrantedAuthority {
     private String description;
 
     private String authority;
+
+    public AuthorityEntity(){
+        
+    }
+
+    public AuthorityEntity(Integer id, Integer parentId, String description, String authroity) {
+        this.id = id;
+        this.parentId = id;
+        this.description = description;
+        this.authority = authroity;
+    }
 
     @Override
     public String getAuthority() {

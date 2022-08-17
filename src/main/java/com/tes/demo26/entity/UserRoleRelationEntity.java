@@ -4,8 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-// @Entity(name = "t_user_role_relation")
-public class UserRoleRelation {
+@Entity(name = "t_user_role_relation")
+public class UserRoleRelationEntity {
     @Id
     @GeneratedValue
     private Integer id;

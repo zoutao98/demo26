@@ -1,26 +1,19 @@
 package com.tes.demo26.entity;
 
-import java.util.List;
-
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 
 @Entity(name = "t_role")
-public class Role {
+public class RoleEntity {
     
     @Id
     @GeneratedValue
     private Integer id;
+    @Column(unique = true, length = 20, nullable = false)
     private String name;
     private String description;
-
-    // @ManyToMany(mappedBy = "roles")
-    // private List<User> users;
-    
     
     public Integer getId() {
         return id;
@@ -40,11 +33,5 @@ public class Role {
     public void setDescription(String description) {
         this.description = description;
     }
-    // public List<User> getUsers() {
-    //     return users;
-    // }
-    // public void setUsers(List<User> users) {
-    //     this.users = users;
-    // }
-    
+
 }

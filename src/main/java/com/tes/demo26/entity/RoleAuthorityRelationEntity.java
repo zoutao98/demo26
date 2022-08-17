@@ -5,7 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity(name = "t_role_authority_relation")
-public class RoleAuthorityRelation {
+public class RoleAuthorityRelationEntity {
     @Id
     @GeneratedValue
     private Integer id;

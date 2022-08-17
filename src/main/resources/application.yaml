@@ -8,25 +8,42 @@ logging:
         security: DEBUG
 
 spring:
+  # datasource:
+  #   driverClassName: org.h2.Driver
+  #   url: jdbc:h2:file:./h2db
+  #   username: sa
+  #   password: 123456
+  # h2:
+  #   console:
+  #     enabled: true
+  #     settings:
+  #       web-allow-others: true
+  # jpa:
+  #   database: H2
+  #   open-in-view: false
+  #   hibernate:
+  #     ddl-auto: update
+  #   show-sql: true
   datasource:
-    driverClassName: org.h2.Driver
-    url: jdbc:h2:file:./h2db
-    username: sa
-    password: 123456
-  h2:
-    console:
-      enabled: true
-      settings:
-        web-allow-others: true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3305/security-demo
+    username: root
+    password: root888&
   jpa:
-    database: H2
+    database: mysql
     open-in-view: false
     hibernate:
       ddl-auto: update
     show-sql: true
+
+
+
 
 # spring:
 #   security:
 #     user:
 #       name: user
 #       password: 123456
+
+mybatis:
+  type-aliases-package: com.tes.demo26.entity
