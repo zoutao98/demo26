@@ -29,9 +29,9 @@ public class User implements UserDetails {
     private boolean accountNonLocked;
     private boolean credentialsNonExpired;
     private boolean enabled;
-    @ManyToMany(targetEntity = Role.class)
-    @JoinTable(name = "t_user_role_relation",joinColumns = {@JoinColumn(name = "userId")}, inverseJoinColumns = {@JoinColumn(name = "roleId")})
-    private List<Role> roles;
+    // @ManyToMany(targetEntity = Role.class)
+    // @JoinTable(name = "t_user_role_relation",joinColumns = {@JoinColumn(name = "userId")}, inverseJoinColumns = {@JoinColumn(name = "roleId")})
+    // private List<Role> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -103,12 +103,12 @@ public class User implements UserDetails {
         this.enabled = enabled;
     }
 
-    public List<Role> getRoles() {
-        return roles;
-    }
+    // public List<Role> getRoles() {
+    //     return roles;
+    // }
 
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
-    }
+    // public void setRoles(List<Role> roles) {
+    //     this.roles = roles;
+    // }
 
 }

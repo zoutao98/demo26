@@ -1,10 +1,9 @@
 package com.tes.demo26.security;
 
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -16,17 +15,18 @@ import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tes.demo26.jwt.JwtAuthenticationFilter;
-import com.tes.demo26.jwt.JwtAuthorizationFilter;
-import com.tes.demo26.services.UserServices;
+import com.tes.demo26.security.jwt.JwtAuthenticationFilter;
+import com.tes.demo26.security.jwt.JwtAuthorizationFilter;
+import com.tes.demo26.security.services.UserServices;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final SecurityAuthenticationEntryPoint securityAuthenticationEntryPoint;
+    @Value("${jwtEnable:true}")
+    private boolean jwtEnable;
 
+    private final SecurityAuthenticationEntryPoint securityAuthenticationEntryPoint;
     private final UserServices userServices;
 
     public SecurityConfig(final SecurityAuthenticationEntryPoint securityAuthenticationEntryPoint,
@@ -35,7 +35,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.userServices = userServices;
     }
 
-    // @Bean
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.cors().and().csrf().disable();
+        http.headers().frameOptions().sameOrigin();
+        // http.authorizeRequests().antMatchers("/login").permitAll().anyRequest().authenticated();
+        // 拦截所有请求 .antMatchers("/hello").hasAuthority("api:hello")
+
+        if (jwtEnable) {
+            http.authorizeRequests().antMatchers("/authentication/login", "/h2-console/**").permitAll();
+            http.authorizeRequests().anyRequest().authenticated();
+            http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+            // http.formLogin().loginProcessingUrl("/login").permitAll();
+
+            // http.addFilterAt(loginFilter(), UsernamePasswordAuthenticationFilter.class);
+            http.addFilterAt(new JwtAuthenticationFilter(authenticationManagerBean()),
+                    UsernamePasswordAuthenticationFilter.class)
+                    .addFilter(new JwtAuthorizationFilter(authenticationManagerBean()));
+        }
+        // 未认证请求
+        http.exceptionHandling().authenticationEntryPoint(securityAuthenticationEntryPoint);
+    }
+
     public PasswordEncoder passwordEncoder() {
         // return new BCryptPasswordEncoder();
         String idForEncode = "bcrypt";
@@ -43,56 +65,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         encoders.put(idForEncode, new BCryptPasswordEncoder());
         encoders.put(null, new BCryptPasswordEncoder());
         return new DelegatingPasswordEncoder(idForEncode, encoders);
-    }
-
-    @Bean
-    public TLoginFilter loginFilter() throws Exception {
-        TLoginFilter tLoginFilter = new TLoginFilter();
-
-        tLoginFilter.setAuthenticationSuccessHandler((request, response, authentication) -> {
-            response.setContentType("application/json;charset=utf-8");
-            PrintWriter out = response.getWriter();
-
-            // String s = "{\"message\":\"登录成功\"}";
-            String s = new ObjectMapper().writeValueAsString(authentication.getPrincipal());
-            // String s = authentication.getPrincipal().toString();
-            out.write(s);
-            out.flush();
-            out.close();
-        });
-
-        tLoginFilter.setAuthenticationFailureHandler((request, response, exception) -> {
-            response.setContentType("application/json;charset=utf-8");
-            PrintWriter out = response.getWriter();
-            String s = "{\"message\":\"登录失败\"}";
-            out.write(s);
-            out.flush();
-            out.close();
-        });
-        tLoginFilter.setAuthenticationManager(authenticationManagerBean());
-        tLoginFilter.setFilterProcessesUrl("/login");
-        return tLoginFilter;
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable();
-        http.headers().frameOptions().sameOrigin();
-        // http.authorizeRequests().antMatchers("/login").permitAll().anyRequest().authenticated();
-        // 拦截所有请求 .antMatchers("/hello").hasAuthority("api:hello")
-        http.authorizeRequests().antMatchers("/authentication/login", "/h2-console/**").permitAll();
-        http.authorizeRequests().anyRequest().authenticated();
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-        // http.formLogin().loginProcessingUrl("/login").permitAll();
-        
-        // http.addFilterAt(loginFilter(), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterAt(new JwtAuthenticationFilter(authenticationManagerBean()),
-                UsernamePasswordAuthenticationFilter.class)
-                .addFilter(new JwtAuthorizationFilter(authenticationManagerBean()));
-
-        // 未认证请求
-        http.exceptionHandling().authenticationEntryPoint(securityAuthenticationEntryPoint);
     }
 
     @Override

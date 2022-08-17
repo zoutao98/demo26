@@ -1,11 +1,13 @@
 package com.tes.demo26.security;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,9 +16,35 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tes.demo26.jwt.UserRequestDto;
+import com.tes.demo26.security.dto.UserRequestDto;
 
-public class TLoginFilter extends UsernamePasswordAuthenticationFilter {
+public class ClassicLoginFilter extends UsernamePasswordAuthenticationFilter {
+
+    public ClassicLoginFilter(AuthenticationManager authenticationManager){
+        setAuthenticationManager(authenticationManager);
+
+        setAuthenticationSuccessHandler((request, response, authentication) -> {
+            response.setContentType("application/json;charset=utf-8");
+            PrintWriter out = response.getWriter();
+
+            // String s = "{\"message\":\"登录成功\"}";
+            String s = new ObjectMapper().writeValueAsString(authentication.getPrincipal());
+            // String s = authentication.getPrincipal().toString();
+            out.write(s);
+            out.flush();
+            out.close();
+        });
+
+        setAuthenticationFailureHandler((request, response, exception) -> {
+            response.setContentType("application/json;charset=utf-8");
+            PrintWriter out = response.getWriter();
+            String s = "{\"message\":\"登录失败\"}";
+            out.write(s);
+            out.flush();
+            out.close();
+        });
+
+    }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
@@ -32,7 +60,7 @@ public class TLoginFilter extends UsernamePasswordAuthenticationFilter {
                 loginInfo = objectMapper.readValue(request.getInputStream(), UserRequestDto.class);
             } catch (IOException e) {
                 e.printStackTrace();
-                throw new BadCredentialsException("json格式错误，没有找到用户名或密码");
+                throw new BadCredentialsException("json格式错误没有找到用户名或密码");
             }
             UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(
                     loginInfo.getUsername().trim(), loginInfo.getPassword().trim());
@@ -42,4 +70,7 @@ public class TLoginFilter extends UsernamePasswordAuthenticationFilter {
             return super.attemptAuthentication(request, response);
         }
     }
+
+
+    
 }

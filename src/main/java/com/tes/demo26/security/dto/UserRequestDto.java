@@ -1,4 +1,4 @@
-package com.tes.demo26.jwt;
+package com.tes.demo26.security.dto;
 
 public class UserRequestDto {
 

@@ -1,4 +1,4 @@
-package com.tes.demo26.jwt;
+package com.tes.demo26.security.jwt;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -22,6 +22,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tes.demo26.security.dto.UserRequestDto;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -46,7 +47,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 loginInfo = objectMapper.readValue(request.getInputStream(), UserRequestDto.class);
             } catch (IOException e) {
                 e.printStackTrace();
-                throw new BadCredentialsException("json格式错误，没有找到用户名或密码");
+                throw new BadCredentialsException("json格式错误没有找到用户名或密码");
             }
             UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(
                     loginInfo.getUsername().trim(), loginInfo.getPassword().trim());

@@ -1,4 +1,4 @@
-package com.tes.demo26.services;
+package com.tes.demo26.security.services;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

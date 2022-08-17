@@ -23,7 +23,7 @@ import com.tes.demo26.dao.UserDao;
 // import com.tes.demo26.dao.UserRoleRelationDao;
 import com.tes.demo26.entity.Role;
 import com.tes.demo26.entity.User;
-import com.tes.demo26.jwt.JwtUtils;
+import com.tes.demo26.security.jwt.JwtUtils;
 
 @SpringBootTest
 class Demo26ApplicationTests {
@@ -57,7 +57,7 @@ class Demo26ApplicationTests {
 		List<Role> rs1 = new ArrayList<>();
 		rs1.add(r1);
 
-		u1.setRoles(rs1);
+		// u1.setRoles(rs1);
 		
 		//userDao.deleteById(1);
 		userDao.save(u1);
