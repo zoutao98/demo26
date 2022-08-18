@@ -43,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // 拦截所有请求 .antMatchers("/hello").hasAuthority("api:hello")
 
         if (jwtEnable) {
-            http.authorizeRequests().antMatchers("/authentication/login", "/h2-console/**").permitAll();
+            http.authorizeRequests().antMatchers("/authentication/login", "/h2-console/**", "/error").permitAll();
             http.authorizeRequests().anyRequest().authenticated();
             http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
